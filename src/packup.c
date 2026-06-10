@@ -30,7 +30,7 @@ typedef struct {
     int size;
 } Heap;
 
-void swap(int *a, int *b)
+void heap_swap(int *a, int *b)
 {
     int temp = *a;
     *a = *b;
@@ -63,7 +63,7 @@ void downHeap(Heap *h, int idx){
             best = r;
 
         if(best == idx) break;
-        swap(&h->data[best], &h->data[idx]);
+        heap_swap(&h->data[best], &h->data[idx]);
         idx = best;
     }
 }
