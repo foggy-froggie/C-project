@@ -1,0 +1,7 @@
+*.html
+.Rhistory
+.RData
+*.o
+*.so
+*.dll
+packup.Rcheck/
