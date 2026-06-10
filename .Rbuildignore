@@ -1,0 +1,7 @@
+^.*\.Rcheck$
+^packup_.*\.tar\.gz$
+^docs$
+^test_run\.R$
+^src/.*\.o$
+^src/.*\.so$
+^src/symbols\.rds$
