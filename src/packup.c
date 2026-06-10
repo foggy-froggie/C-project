@@ -4,25 +4,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int *global_d;
-double *global_w;
+typedef struct {
+    int og_idx;
+    int duration;
+    double weight;
+} Item;
 
 int comp(const void* a, const void* b) {
-    int i = *(int*)a;
-    int j = *(int*)b;
+    const Item *itemA = (const Item*)a;
+    const Item *itemB = (const Item*)b;
 
-    if (global_d[i] > global_d[j]) return -1;
-    if (global_d[i] < global_d[j]) return 1;
+    if (itemA->duration > itemB->duration) return -1;
+    if (itemA->duration < itemB->duration) return 1;
 
-    if (global_w[i] > global_w[j]) return -1;
-    if (global_w[i] < global_w[j]) return 1;
+    if (itemA->weight > itemB->weight) return -1;
+    if (itemA->weight < itemB->weight) return 1;
 
     return 0;
 }
 
 typedef struct {
     int *data; // Tablica indeksów osób w kopcu
-    double *loads; // Tablica indeksów osób w kopcu
+    double *loads; // Obciążenie danej osoby
     double *strengths; // wskaźnik do tablicy siły
     int size;
 } Heap;
@@ -93,22 +96,30 @@ SEXP assign_items(
         if(strength[i] <= 0) Rf_error("strength must be > 0!");
     }
 
-    global_d = durations;
-    global_w = weights;
+    Item *items = malloc(n * sizeof(Item));
+    if (items == NULL) Rf_error("memory allocation failed");
 
-    int *sorted = malloc(n*sizeof(int));
-
-    for (int i = 0; i < n ; i++){
-        sorted[i] = i;
+    for (int i = 0; i < n; i++) {
+        items[i].og_idx = i;
+        items[i].duration = durations[i];
+        items[i].weight = weights[i];
     }
 
-    qsort(sorted, n, sizeof(int),comp);
+    qsort(items, n, sizeof(Item), comp);
 
     Heap h;
     h.data = malloc(p * sizeof(int));
     h.loads = calloc(p, sizeof(double)); 
     h.strengths = strength;
     h.size = p;
+
+    if (h.data == NULL || h.loads == NULL) {
+        free(items);
+        if (h.data) free(h.data);
+        if (h.loads) free(h.loads);
+        Rf_error("memory allocation failed ");
+    }
+
 
     for(int i = 0; i < p; i++) {
         h.data[i] = i;
@@ -122,13 +133,13 @@ SEXP assign_items(
 
     for(int i = 0; i < n; i++){
         int best = h.data[0];
-        double effort = (weights[sorted[i]]*durations[sorted[i]] / h.strengths[best]);
+        double effort = (items[i].weight*items[i].duration) / h.strengths[best];
         h.loads[best] += effort;
-        INTEGER(result)[sorted[i]] = best + 1;
+        INTEGER(result)[items[i].og_idx] = best + 1;
         downHeap(&h, 0);
     }
 
-    free(sorted);
+    free(items);
     free(h.data);
     free(h.loads);
 
