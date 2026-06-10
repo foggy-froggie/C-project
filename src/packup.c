@@ -96,7 +96,7 @@ SEXP assign_items(
         if(strength[i] <= 0) Rf_error("strength must be > 0!");
     }
 
-    Item *items = malloc(n * sizeof(Item));
+    Item *items = (Item *)R_alloc(n, sizeof(Item));
     if (items == NULL) Rf_error("memory allocation failed");
 
     for (int i = 0; i < n; i++) {
@@ -108,10 +108,14 @@ SEXP assign_items(
     qsort(items, n, sizeof(Item), comp);
 
     Heap h;
-    h.data = malloc(p * sizeof(int));
-    h.loads = calloc(p, sizeof(double)); 
+    h.data = (int *)R_alloc(p, sizeof(int));
+    h.loads = (double *)R_alloc(p, sizeof(double));
     h.strengths = strength;
     h.size = p;
+
+    for(int i = 0; i < p; i++) {
+        h.loads[i] = 0.0;
+    }
 
     if (h.data == NULL || h.loads == NULL) {
         free(items);
@@ -138,11 +142,7 @@ SEXP assign_items(
         INTEGER(result)[items[i].og_idx] = best + 1;
         downHeap(&h, 0);
     }
-
-    free(items);
-    free(h.data);
-    free(h.loads);
-
+    
     UNPROTECT(1);
     return result;
  
