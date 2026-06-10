@@ -2,12 +2,15 @@ Package: packup
 Type: Package
 Title: Greedy Heap-Based Weight Distributor
 Version: 0.1.0
-Author: Jagna Wnuk
-Maintainer: Jagna Wnuk <jagna.wnuk@gmail.com>
-Description: Tool to distibute weight among people using heap-based priority queue implemented in C.
+Authors@R: person(given = "Jagna",
+                  family = "Wnuk",
+                  role = c("aut", "cre"),
+                  email = "jagnawnuk@gmail.com")
+Description: Tool to distribute weight among people using heap-based priority queue implemented in C.
 License: GPL-3
 Encoding: UTF-8
 Config/roxygen2/version: 8.0.0
-Suggests:
-    testthat (>= 3.0.0)
+Suggests: 
+    testthat (>= 3.0.0),
+    roxygen2
 Config/testthat/edition: 3
