@@ -88,3 +88,18 @@ print(result_df)
 * **Basia's Effort:** $5.40$
 * **Krysia's Effort:** $5.42$
 * **Kasia's Effort:** $5.60$
+
+--- 
+### Installation
+
+You can install the development version of `packup` directly from GitHub using the `devtools` package. 
+
+Open your R console and run the following commands:
+
+```R
+# If you don't have devtools installed yet:
+install.packages("devtools")
+
+# Install packup from GitHub
+devtools::install_github("foggy-froggie/C-project")
+```
